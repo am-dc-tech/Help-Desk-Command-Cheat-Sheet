@@ -1,0 +1,42 @@
+# Help Desk Command Cheat Sheet
+
+## Command Prompt: Networking
+
+| Command | What it does |
+|---|---|
+| `ipconfig` | Shows the IP address and network info |
+| `ipconfig /all` | Shows full details, including MAC address, DNS, and DHCP |
+| `ipconfig /release` and `ipconfig /renew` | Drops and requests a new IP address |
+| `ipconfig /flushdns` | Clears the DNS cache |
+| `ping 8.8.8.8` | Tests connectivity to another device |
+| `tracert google.com` | Shows each hop to a destination |
+| `nslookup google.com` | Checks DNS resolution |
+| `netstat -an` | Lists open connections and listening ports |
+
+## Command Prompt: System and Files
+
+| Command | What it does |
+|---|---|
+| `hostname` | Shows the computer's name |
+| `whoami` | Shows the current user |
+| `systeminfo` | Shows OS version, uptime, and hardware info |
+| `tasklist` | Lists running processes |
+| `taskkill /IM notepad.exe /F` | Force-closes a program |
+| `sfc /scannow` | Scans and repairs system files |
+| `chkdsk` | Checks the disk for errors |
+| `gpupdate /force` | Refreshes Group Policy |
+| `gpresult /r` | Shows which policies apply to the user |
+| `net user username` | Shows account info and password expiry |
+
+## PowerShell
+
+| Command | What it does |
+|---|---|
+| `Get-Process` | Lists running processes |
+| `Get-Service` | Lists services and their status |
+| `Restart-Service -Name Spooler` | Restarts a service (fixes many print issues) |
+| `Test-NetConnection google.com -Port 443` | Tests a connection to a specific port |
+| `Get-ADUser -Identity username` | Looks up an AD user |
+| `Unlock-ADAccount -Identity username` | Unlocks a locked-out account |
+| `Get-ADUser -Identity username -Properties LockedOut` | Checks if an account is locked |
+| `Get-Help Get-Service` | Shows help for any command |
