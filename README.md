@@ -1,6 +1,6 @@
 # Help Desk Command Cheat Sheet
 
-A personal quick-reference of the Windows commands I use to diagnose and resolve common IT support issues across networking, system health, user accounts, printing, and Active Directory.
+A personal quick-reference of the Windows commands to diagnose and resolve common IT support issues across networking, system health, user accounts, printing, and Active Directory.
 
 **Platforms:** Windows Command Prompt, PowerShell, Active Directory
 
