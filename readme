@@ -1,132 +1,70 @@
-# 🛠️ Help Desk Command Cheat Sheet
+# Help Desk Command Cheat Sheet
 
-> **Windows Command Prompt & PowerShell Reference**  
-> A quick-reference guide for common networking, system administration, troubleshooting, and Active Directory commands.
+A personal quick-reference of the Windows commands I use to diagnose and resolve common IT support issues across networking, system health, user accounts, printing, and Active Directory.
 
----
+**Platforms:** Windows Command Prompt, PowerShell, Active Directory
 
-## 🌐 Command Prompt — Networking
+## Skills Demonstrated
 
-| 💻 Command | 📋 Purpose |
+| Area | Tools |
 |---|---|
-| `ipconfig` | Displays the computer's IP address and basic network configuration |
-| `ipconfig /all` | Displays detailed network information, including MAC address, DNS, and DHCP |
-| `ipconfig /release` | Releases the current DHCP-assigned IP address |
-| `ipconfig /renew` | Requests a new IP address from the DHCP server |
-| `ipconfig /flushdns` | Clears the local DNS resolver cache |
-| `ping 8.8.8.8` | Tests basic network connectivity to an IP address |
-| `tracert google.com` | Displays the network hops between your computer and a destination |
-| `nslookup google.com` | Tests DNS resolution and displays DNS information |
-| `netstat -an` | Displays active connections and listening ports |
+| Network troubleshooting | `ipconfig`, `ping`, `tracert`, `nslookup`, `Test-NetConnection` |
+| System diagnostics and repair | `systeminfo`, `tasklist`, `sfc`, `chkdsk` |
+| Account support | `whoami`, `net user`, `Get-ADUser`, `Unlock-ADAccount` |
+| Group Policy | `gpupdate`, `gpresult` |
+| Services and printing | `Get-Service`, `Restart-Service` |
+| Command-line scripting | Command Prompt and PowerShell |
 
-### 🔎 Common Networking Workflow
+## Contents
 
-```text
-No Internet?
-    │
-    ├── ipconfig
-    │      ↓
-    ├── ping 127.0.0.1
-    │      ↓
-    ├── ping <default-gateway>
-    │      ↓
-    ├── ping 8.8.8.8
-    │      ↓
-    └── nslookup google.com
-```
+- [Troubleshooting Playbooks](#troubleshooting-playbooks)
+- [CMD Networking](#cmd-networking)
+- [CMD System and Files](#cmd-system-and-files)
+- [PowerShell Services](#powershell-services)
+- [PowerShell Networking](#powershell-networking)
+- [Active Directory](#active-directory)
 
 ---
 
-## 🖥️ Command Prompt — System & Files
+## Troubleshooting Playbooks
 
-| 💻 Command | 📋 Purpose |
-|---|---|
-| `hostname` | Displays the computer's hostname |
-| `whoami` | Displays the currently logged-in user |
-| `systeminfo` | Displays detailed OS, hardware, and system information |
-| `tasklist` | Lists currently running processes |
-| `taskkill /IM notepad.exe /F` | Forcefully terminates a running process |
-| `sfc /scannow` | Scans and repairs protected Windows system files |
-| `chkdsk` | Checks the file system and disk for errors |
-| `gpupdate /force` | Forces Group Policy to refresh |
-| `gpresult /r` | Displays the Group Policy settings applied to the computer/user |
-| `net user username` | Displays information about a local user account |
+Common ticket types and the order I work through them.
 
----
+### No Internet
 
-# ⚡ PowerShell
+Work from the local machine outward to isolate where the failure is.
 
-## 🖥️ Processes & Services
-
-| 💻 Command | 📋 Purpose |
-|---|---|
-| `Get-Process` | Lists currently running processes |
-| `Get-Service` | Lists Windows services and their status |
-| `Restart-Service -Name Spooler` | Restarts the Print Spooler service |
-| `Get-Help Get-Service` | Displays help and usage information for a PowerShell command |
-
----
-
-## 🌐 PowerShell Networking
-
-| 💻 Command | 📋 Purpose |
-|---|---|
-| `Test-NetConnection google.com` | Tests network connectivity to a destination |
-| `Test-NetConnection google.com -Port 443` | Tests connectivity to a specific TCP port |
-| `Resolve-DnsName google.com` | Performs DNS resolution |
-| `Get-NetIPConfiguration` | Displays IP configuration information |
-| `Get-NetAdapter` | Displays network adapters and their status |
-
----
-
-## 👤 Active Directory
-
-> **Requires the Active Directory PowerShell module.**
-
-| 💻 Command | 📋 Purpose |
-|---|---|
-| `Get-ADUser -Identity username` | Retrieves information about an Active Directory user |
-| `Get-ADUser -Identity username -Properties LockedOut` | Checks whether an AD account is locked |
-| `Unlock-ADAccount -Identity username` | Unlocks a locked Active Directory account |
-| `Set-ADAccountPassword -Identity username -Reset -NewPassword (Read-Host -AsSecureString)` | Resets an AD user's password |
-| `Get-ADGroupMember -Identity "GroupName"` | Lists the members of an Active Directory group |
-| `Get-ADComputer -Identity "ComputerName"` | Retrieves information about an AD computer account |
-
----
-
-# 🚨 Quick Troubleshooting Reference
-
-### 🌐 Network Problem
-
-```powershell
+```cmd
 ipconfig /all
-ping <default-gateway>
+ping 127.0.0.1
+ping DEFAULT-GATEWAY-IP
 ping 8.8.8.8
 nslookup google.com
 ```
 
-### 👤 User Account Problem
+| Step | Command | What a failure points to |
+|---|---|---|
+| 1 | `ipconfig /all` | Missing or incorrect IP (DHCP or adapter issue) |
+| 2 | `ping 127.0.0.1` | Problem with the local network stack |
+| 3 | `ping` the default gateway | Problem reaching the local router or switch |
+| 4 | `ping 8.8.8.8` | Problem reaching the internet |
+| 5 | `nslookup google.com` | DNS problem (internet works, names do not resolve) |
 
-```powershell
-whoami
-net user username
-```
-
-For Active Directory:
+### Locked-Out User
 
 ```powershell
 Get-ADUser -Identity username -Properties LockedOut
 Unlock-ADAccount -Identity username
 ```
 
-### 🖨️ Printer Problem
+### Printer Not Working
 
 ```powershell
 Get-Service -Name Spooler
 Restart-Service -Name Spooler
 ```
 
-### 🏢 Group Policy Problem
+### Group Policy Not Applying
 
 ```cmd
 gpupdate /force
@@ -135,19 +73,69 @@ gpresult /r
 
 ---
 
-## 📌 Command Categories
+## CMD Networking
 
-| Category | Primary Tools |
+| Command | Purpose |
 |---|---|
-| 🌐 Networking | `ipconfig`, `ping`, `tracert`, `nslookup` |
-| 🖥️ System | `systeminfo`, `tasklist`, `sfc`, `chkdsk` |
-| ⚙️ Services | `Get-Service`, `Restart-Service` |
-| 👤 Users | `whoami`, `net user`, `Get-ADUser` |
-| 🔐 Active Directory | `Get-ADUser`, `Unlock-ADAccount`, `Get-ADGroupMember` |
-| 🏢 Group Policy | `gpupdate`, `gpresult` |
-| 🖨️ Printing | `Restart-Service Spooler` |
-| 🌐 PowerShell Networking | `Test-NetConnection`, `Resolve-DnsName`, `Get-NetAdapter` |
+| `ipconfig` | Show IP address and basic network configuration |
+| `ipconfig /all` | Show full details, including MAC address, DNS, and DHCP |
+| `ipconfig /release` | Release the current DHCP-assigned IP address |
+| `ipconfig /renew` | Request a new IP address from the DHCP server |
+| `ipconfig /flushdns` | Clear the local DNS resolver cache |
+| `ping 8.8.8.8` | Test basic connectivity to an IP address |
+| `tracert google.com` | Show each network hop to a destination |
+| `nslookup google.com` | Test DNS resolution |
+| `netstat -an` | Show active connections and listening ports |
+
+## CMD System and Files
+
+| Command | Purpose |
+|---|---|
+| `hostname` | Show the computer name |
+| `whoami` | Show the current logged-in user |
+| `systeminfo` | Show OS, hardware, and system details |
+| `tasklist` | List running processes |
+| `taskkill /IM notepad.exe /F` | Force-close a process |
+| `sfc /scannow` | Scan and repair protected Windows system files |
+| `chkdsk` | Check the disk and file system for errors |
+| `gpupdate /force` | Force a Group Policy refresh |
+| `gpresult /r` | Show Group Policy settings applied to the user and computer |
+| `net user username` | Show details for a local user account |
 
 ---
 
-> **💡 Tip:** When troubleshooting, start with the simplest command that can confirm or eliminate a possible cause. Document what you checked and what the result was.
+## PowerShell Services
+
+| Command | Purpose |
+|---|---|
+| `Get-Process` | List running processes |
+| `Get-Service` | List services and their status |
+| `Restart-Service -Name Spooler` | Restart the Print Spooler service |
+| `Get-Help Get-Service` | Show help for any PowerShell command |
+
+## PowerShell Networking
+
+| Command | Purpose |
+|---|---|
+| `Test-NetConnection google.com` | Test connectivity to a destination |
+| `Test-NetConnection google.com -Port 443` | Test connectivity to a specific TCP port |
+| `Resolve-DnsName google.com` | Perform a DNS lookup |
+| `Get-NetIPConfiguration` | Show IP configuration |
+| `Get-NetAdapter` | Show network adapters and their status |
+
+## Active Directory
+
+> Requires the Active Directory PowerShell module (RSAT).
+
+| Command | Purpose |
+|---|---|
+| `Get-ADUser -Identity username` | Look up a user account |
+| `Get-ADUser -Identity username -Properties LockedOut` | Check whether an account is locked |
+| `Unlock-ADAccount -Identity username` | Unlock an account |
+| `Set-ADAccountPassword -Identity username -Reset -NewPassword (Read-Host -AsSecureString)` | Reset a user's password |
+| `Get-ADGroupMember -Identity "GroupName"` | List members of a group |
+| `Get-ADComputer -Identity "ComputerName"` | Look up a computer account |
+
+---
+
+**Troubleshooting approach:** start with the simplest check that can confirm or rule out a cause, then document what you tested and what the result was.
